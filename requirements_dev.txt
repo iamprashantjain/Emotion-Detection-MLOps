@@ -5,6 +5,7 @@ seaborn
 flask
 mlflow===2.2.2
 dvc
+dagshub
 
 #dev_requirements
 
