@@ -12,6 +12,9 @@ import nltk
 import string
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
+from pathlib import Path
+import pickle
+
 
 def lemmatization(text):
     """Lemmatize the text."""
@@ -97,7 +100,10 @@ model_version = get_latest_model_version(model_name)
 model_uri = f'models:/{model_name}/{model_version}'
 model = mlflow.pyfunc.load_model(model_uri)
 
-vectorizer = pickle.load(open(r'artifacts\data\vectorized\vectorizer.pkl', 'rb'))
+
+vectorizer_path = Path('artifacts') / 'data' / 'vectorized' / 'vectorizer.pkl'
+vectorizer = pickle.load(vectorizer_path.open('rb'))
+
 
 @app.route('/')
 def home():
