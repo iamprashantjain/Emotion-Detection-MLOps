@@ -24,36 +24,35 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      - name: Install Python dependencies
+      - name: Install Python dependencies (quiet & faster)
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements_dev.txt
+          python -m pip install --upgrade pip --quiet
+          pip install -r requirements_dev.txt --quiet
 
-      - name: Setup DVC
+      - name: Setup DVC and Dagshub
         run: |
-          pip install dvc[s3] dagshub
+          pip install --quiet dvc[s3] dagshub
 
-      - name: Pull data and artifacts from S3 DVC remote
+      - name: Pull DVC data from S3
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
         run: |
-          dvc pull
+          dvc pull --quiet
+          test -f artifacts/data/vectorized/test_vectorized.csv     #test if file got downloaded from s3
 
-      
       - name: Run DVC pipeline
         env:
-          PYTHONPATH: ${{ github.workspace }}   #PYTHONPATH tells Python where to look for modules. By default, it doesn’t include your project root, so src becomes unrecognized.
+          PYTHONPATH: ${{ github.workspace }}   #pythonpath tells to locate src folder
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
         run: |
-          dvc repro
+          dvc repro --quiet
 
-      
-      - name: Run model tests
+      - name: Run model loading tests
         env:
           DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
         run: |
-          python tests/1_model_loading.py
+          python -m unittest discover -s tests -p "1_model_loading.py"
