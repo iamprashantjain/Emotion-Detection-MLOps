@@ -61,8 +61,8 @@ stages:
       size: 1061
     - path: src/components/text_vectorization.py
       hash: md5
-      md5: 5d69c105cca7e7c2dfc550ae1a4184ad
-      size: 3296
+      md5: 467164a4490375ef146651dbd7031dcd
+      size: 3311
     outs:
     - path: artifacts/data/vectorized/test_vectorized.csv
       hash: md5
@@ -74,7 +74,7 @@ stages:
       size: 1606061
     - path: artifacts/data/vectorized/vectorizer.pkl
       hash: md5
-      md5: 8d1c29d874ebeba838fc7f648f476983
+      md5: a749484fe7f6fa106fd0c99f62fb27b7
       size: 143932
   model_trainer:
     cmd: python src/components/model_trainer.py
@@ -118,7 +118,7 @@ stages:
     outs:
     - path: reports/experiment_info.json
       hash: md5
-      md5: 49e9d01fdf7df528324ce29505bc33a7
+      md5: e282f2a9d943fc40b6b0f26aabc6b3fd
       size: 85
     - path: reports/metrics.yaml
       hash: md5
@@ -133,7 +133,7 @@ stages:
       size: 1061
     - path: reports/experiment_info.json
       hash: md5
-      md5: 49e9d01fdf7df528324ce29505bc33a7
+      md5: e282f2a9d943fc40b6b0f26aabc6b3fd
       size: 85
     - path: src/components/model_register.py
       hash: md5
