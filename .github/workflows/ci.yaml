@@ -41,6 +41,7 @@ jobs:
         run: |
           dvc pull
 
+      
       - name: Run DVC pipeline
         env:
           PYTHONPATH: ${{ github.workspace }}   #PYTHONPATH tells Python where to look for modules. By default, it doesn’t include your project root, so src becomes unrecognized.
@@ -50,4 +51,9 @@ jobs:
         run: |
           dvc repro
 
-
+      
+      - name: Run model tests
+        env:
+          DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
+        run: |
+          python tests\1_model_loading.py
