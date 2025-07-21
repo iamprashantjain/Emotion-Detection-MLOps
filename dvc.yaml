@@ -3,41 +3,48 @@ stages:
     cmd: python src/components/data_ingestion.py
     deps:
       - src/components/data_ingestion.py
-      - artifacts/scraped_data/cars24_scraped_data.csv
+      - params.yaml
     outs:
-      - artifacts/data_ingestion/raw/cars24_scraped_data.csv
-      - artifacts/data_ingestion/train/train.csv
-      - artifacts/data_ingestion/test/test.csv
+      - artifacts/data/raw/train.csv
+      - artifacts/data/raw/test.csv
 
-
-  data_transformation:
-    cmd: python src/components/data_transformation.py
+  data_preprocessing:
+    cmd: python src/components/data_preprocessing.py
     deps:
-      - src/components/data_transformation.py
-      - artifacts/data_ingestion/train/train.csv
-      - artifacts/data_ingestion/test/test.csv
+      - artifacts/data/raw/train.csv
+      - artifacts/data/raw/test.csv
+      - src/components/data_preprocessing.py
     outs:
-      - artifacts/transformed_data/train/train.csv
-      - artifacts/transformed_data/test/test.csv
+      - artifacts/data/processed/train_processed.csv
+      - artifacts/data/processed/test_processed.csv
 
-  model_training:
+  text_vectorization:
+    cmd: python src/components/text_vectorization.py
+    deps:
+      - artifacts/data/processed/train_processed.csv
+      - artifacts/data/processed/test_processed.csv
+      - src/components/text_vectorization.py
+      - params.yaml
+    outs:
+      - artifacts/data/vectorized/train_vectorized.csv
+      - artifacts/data/vectorized/test_vectorized.csv
+      - artifacts/data/vectorized/vectorizer.pkl
+
+  model_trainer:
     cmd: python src/components/model_trainer.py
     deps:
+      - artifacts/data/vectorized/train_vectorized.csv
       - src/components/model_trainer.py
-      - artifacts/transformed_data/train/train.csv
-      - artifacts/transformed_data/test/test.csv
-      - artifacts/preprocessor/preprocessor.pkl
-      - artifacts/preprocessor/selected_features.pkl
-    params:
-      - model_training.model_alpha
+      - params.yaml
     outs:
-      - artifacts/model/model.pkl
-      - artifacts/model/model_info.json
+      - artifacts/model/logistic_regression_model.pkl
 
-
-  register_model:
-    cmd: python src/components/register_model.py
+  model_evaluation:
+    cmd: python src/components/model_evaluation.py
     deps:
-      - src/components/register_model.py
-      - artifacts/model/model_info.json
-    params: []
+      - artifacts/data/vectorized/test_vectorized.csv
+      - artifacts/model/logistic_regression_model.pkl
+      - src/components/model_evaluation.py
+      - params.yaml
+    outs:
+      - artifacts/model/metrics.yaml
