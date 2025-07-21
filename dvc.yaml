@@ -47,4 +47,13 @@ stages:
       - src/components/model_evaluation.py
       - params.yaml
     outs:
-      - artifacts/model/metrics.yaml
+      - reports/metrics.yaml
+      - reports/experiment_info.json
+
+
+  model_registration:
+    cmd: python src/components/model_register.py
+    deps:
+      - src/components/model_register.py
+      - reports/experiment_info.json
+      - params.yaml
