@@ -62,4 +62,4 @@ jobs:
         if: success()   #promote only if all above steps successfully executed
         env:
           DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
-        run: python src\utils\utils.py
+        run: python src/utils/utils.py
