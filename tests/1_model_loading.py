@@ -32,7 +32,8 @@ class TestModelLoading(unittest.TestCase):
         cls.new_model = mlflow.pyfunc.load_model(cls.new_model_uri)
 
         # Load the vectorizer
-        cls.vectorizer = pickle.load(open('artifacts\data\vectorized\vectorizer.pkl', 'rb'))
+        with open('artifacts/data/vectorized/vectorizer.pkl', 'rb') as f:
+            vectorizer = pickle.load(f)
 
         # Load holdout test data
         cls.holdout_data = pd.read_csv('artifacts\data\vectorized\test_vectorized.csv')
