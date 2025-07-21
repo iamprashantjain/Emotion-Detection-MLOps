@@ -1,20 +1,26 @@
-# 🚀 Emotion Detection MLOps Pipeline
+# Emotion Detection MLOps Pipeline
 
-This project demonstrates a complete Machine Learning Operations (MLOps) workflow for Emotion Detection using **DVC**, **MLflow**, **DagsHub**, and **AWS (ECR/ECS)**.
+This project shows a complete MLOps workflow for Emotion Detection using DVC, MLflow, DagsHub, and AWS (ECR/ECS).
 
 ---
 
-## ✅ Project Setup
+## Project Setup
 
-1. **Create GitHub Repository**
+1. **Create a GitHub Repository**
 
-   * Use ML project template and initialize a clean repository.
+   Start by creating a GitHub repository using a machine learning project template.
 
-2. **Clone Repository Locally**
+2. **Clone the Repository Locally**
 
-3. **Setup Virtual Environment**
+   Clone that repository to your local system.
+
+3. **Set Up a Virtual Environment**
+
+   Create and activate a virtual environment to manage project dependencies.
 
 4. **Configure MLflow Tracking on DagsHub**
+
+   Connect MLflow tracking to DagsHub using the following code:
 
    ```python
    import dagshub, mlflow
@@ -27,73 +33,81 @@ This project demonstrates a complete Machine Learning Operations (MLOps) workflo
        mlflow.log_metric('metric', 1)
    ```
 
-   * MLflow UI: [DagsHub MLflow Dashboard](https://dagshub.com/iamprashantjain/Emotion-Detection-MLOps.mlflow)
+   You can access the MLflow dashboard on DagsHub here:
+   [DagsHub MLflow Dashboard](https://dagshub.com/iamprashantjain/Emotion-Detection-MLOps.mlflow)
 
 ---
 
-## 🧪 Experimentation
+## Experimentation
 
 5. **Verify MLflow Integration**
 
+   Test MLflow is properly connected and tracks experiments.
+
 6. **Run Experiments**
 
-   * **Experiment 1:** Baseline model
-   * **Experiment 2:** Bag-of-Words (BoW) vs TF-IDF Vectorization
-   * **Experiment 3:** Hyperparameter tuning for best model-vectorizer combo
-   * Track all experiments via **MLflow** on **DagsHub**.
+   * First, run a baseline model.
+   * Next, compare Bag-of-Words and TF-IDF vectorization.
+   * Then, tune hyperparameters to find the best combination.
+   * All experiments will be tracked through MLflow on DagsHub.
 
 ---
 
-## ⚙️ DVC Pipeline
+## DVC Pipeline
 
-7. **Initialize DVC:** `dvc init`
+7. **Initialize DVC**
 
-8. **Add DVC Remote:**
+   Use the command `dvc init` to start version controlling your data.
 
-   * Local remote: `%TEMP%`
-   * Optional: Configure AWS S3 remote.
+8. **Add DVC Remote**
 
-9. **Create DVC Pipeline:**
+   Set up a local remote, or connect to AWS S3 as a remote storage.
 
-   * Define pipeline via `dvc.yaml` and `params.yaml`.
+9. **Create a DVC Pipeline**
 
-10. **Register Best Model** in **MLflow Model Registry**.
+   Define your pipeline using `dvc.yaml` and `params.yaml`.
 
-11. **Setup AWS S3 Bucket** and configure as **DVC Remote**.
+10. **Register the Best Model**
 
----
+    Save best performing model in the MLflow model registry.
 
-## 🖥️ Model Serving
+11. **Set Up AWS S3 Bucket**
 
-12. **Build Flask API:**
-
-    * Fetch the latest production model from Model Registry and serve real-time predictions via Flask app.
+    Use S3 as a DVC remote to store data and artifacts.
 
 ---
 
-## 🔄 CI/CD Automation
+## Model Serving
 
-13. **Continuous Integration (CI) with GitHub Actions:**
+12. **Build a Flask API**
 
-* Run the complete **DVC pipeline** on every push.
-* Register the latest model in **Staging**.
-* Automated tests:
-
-  * Model signature validation
-  * Performance metrics validation
-  * Flask API endpoint testing
-* On successful validation, promote model to **Production**.
-
-14. **Dockerize Flask App**
-
-    * Build Docker image and push to **AWS ECR**.
-
-15. **Continuous Deployment (CD):**
-
-    * Deploy the production-ready model and Flask app on **AWS EC2** or **ECS**.
+    Create a simple Flask application that fetches the latest production model from the registry and serves predictions.
 
 ---
 
-### 📌 End-to-End Workflow:
+## CI/CD Automation
 
-Version-controlled data & code → ML Experiments Tracking → Model Registry → Model Serving API → Automated CI/CD → Cloud Deployment.
+13. **Set Up Continuous Integration with GitHub Actions**
+
+    * Run the entire DVC pipeline on every code push.
+    * Register the latest model in the staging phase.
+    * Run automated tests to check:
+
+      * Model input and output formats
+      * Model performance
+      * Flask API functionality
+    * If all tests pass, promote the model to production.
+
+14. **Dockerize the Flask App**
+
+    Build a Docker image of your Flask application and push it to AWS ECR.
+
+15. **Set Up Continuous Deployment**
+
+    Deploy the production-ready model and Flask API using AWS EC2 or ECS.
+
+---
+
+## Summary
+
+This project shows a complete cycle of working with version-controlled data and code, running machine learning experiments, registering models, building a prediction API, and setting up automated CI/CD with deployment to the cloud.
