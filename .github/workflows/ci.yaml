@@ -67,4 +67,4 @@ jobs:
         if: success()   # Promote only if all previous steps succeed
         env:
           DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
-        run: python src/utils/promote_model.py   # Promote the latest model to Production stage on MLflow
+        run: python src/utils/utils.py   # Promote the latest model to Production stage on MLflow
