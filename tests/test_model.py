@@ -1,3 +1,4 @@
+from pathlib import Path
 import unittest
 import mlflow
 import os
@@ -32,11 +33,13 @@ class TestModelLoading(unittest.TestCase):
         cls.new_model = mlflow.pyfunc.load_model(cls.new_model_uri)
 
         # Load the vectorizer
-        with open('artifacts/data/vectorized/vectorizer.pkl', 'rb') as f:
-            vectorizer = pickle.load(f)
+        vectorizer_path = Path('artifacts') / 'data' / 'vectorized' / 'vectorizer.pkl'
+        with open(vectorizer_path, 'rb') as f:
+            cls.vectorizer = pickle.load(f)
 
         # Load holdout test data
-        cls.holdout_data = pd.read_csv(r'artifacts\data\vectorized\test_vectorized.csv')
+        test_data_path = Path('artifacts') / 'data' / 'vectorized' / 'test_vectorized.csv'
+        cls.holdout_data = pd.read_csv(test_data_path)
 
     @staticmethod
     def get_latest_model_version(model_name, stage="Staging"):
