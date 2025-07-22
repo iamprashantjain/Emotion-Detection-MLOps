@@ -1,24 +1,28 @@
 name: CI Pipeline
 
-on: 
-  push:   # Trigger pipeline on every push to the repository
+on:
+  push:   # Trigger pipeline on every push event to the repository
 
 jobs:
   project-testing:
-    runs-on: ubuntu-latest   # Use the latest Ubuntu GitHub-hosted runner
+    runs-on: ubuntu-latest   # Use latest GitHub-hosted Ubuntu runner
 
     env:  # GLOBAL ENVIRONMENT VARIABLES for all steps
-      PYTHONPATH: ${{ github.workspace }}   # Allows Python to resolve 'src' modules across all steps
+      PYTHONPATH: ${{ github.workspace }}   # Allows Python to resolve modules inside 'src' folder
+      AWS_REGION: ap-south-1
 
     steps:
+      # STEP 1: Checkout code from GitHub
       - name: Checkout code
-        uses: actions/checkout@v4   # Checkout your code from the GitHub repo
+        uses: actions/checkout@v4
 
+      # STEP 2: Set up Python environment
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'   # Set Python version
+          python-version: '3.10'
 
+      # STEP 3: Cache pip dependencies for faster pipeline runs
       - name: Cache pip dependencies
         uses: actions/cache@v3
         with:
@@ -26,62 +30,83 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('requirements_dev.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
-        # Cache pip packages for faster builds
 
+      # STEP 4: Install required Python packages
       - name: Install Python dependencies (quiet & faster)
         run: |
           python -m pip install --upgrade pip --quiet
           pip install -r requirements_dev.txt --quiet
-        # Install your Python dependencies quietly to reduce logs and improve speed
 
+      # STEP 5: Install DVC and Dagshub for data versioning and remote storage
       - name: Setup DVC and Dagshub
         run: |
           pip install --quiet dvc[s3] dagshub
-        # Install DVC with S3 support and Dagshub client
 
+      # STEP 6: Pull dataset and artifacts tracked by DVC from S3
       - name: Pull DVC data from S3
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
         run: |
-          dvc pull --quiet   # Pull all tracked data/artifacts from DVC S3 remote storage
-          test -f artifacts/data/vectorized/test_vectorized.csv   # Check if key artifact exists after pull
+          dvc pull --quiet
+          test -f artifacts/data/vectorized/test_vectorized.csv   # Validate if key file is pulled
 
+      # STEP 7: Re-run the entire data pipeline using DVC
       - name: Run DVC pipeline
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
         run: |
-          dvc repro --quiet   # Run full DVC pipeline to reproduce all stages
+          dvc repro --quiet
+
 
       - name: Run model loading tests
         env:
           DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
         run: |
           python -m unittest discover -s tests -p "test_model.py"
-        # Run all unittests matching test_model.py inside tests folder
 
+      # STEP 9: Promote latest best model to Production stage in MLflow Registry
       - name: Promote model to production
-        if: success()   # Promote only if all previous steps succeed
+        if: success()
         env:
           DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
-        run: python src/utils/utils.py   # Promote the latest model to Production stage on MLflow
+        run: |
+          python src/utils/utils.py
 
-      
+      # STEP 10: Unit test Flask application for health and predict endpoints
       - name: Run Flask app tests
         if: success()
         env:
           DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
-        run: python -m unittest tests/test_flask_app.py
+        run: |
+          python -m unittest tests/test_flask_app.py
 
+      # STEP 11: Login to AWS ECR using credentials securely stored in GitHub Secrets
+      - name: ECR Login
+        if: success()
+        run: |
+          aws configure set region $AWS_REGION
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin 739275446561.dkr.ecr.$AWS_REGION.amazonaws.com
 
+      # STEP 12: Build Docker image
       - name: Build docker image
         if: success()
         run: |
-          docker build -t emotion-detector:latest .
+          docker build -t prashant-mlops-ecr .
 
-        
+      # STEP 13: Tag Docker image before pushing to AWS ECR
+      - name: Tag docker image
+        if: success()
+        run: |
+          docker tag prashant-mlops-ecr:latest 739275446561.dkr.ecr.$AWS_REGION.amazonaws.com/prashant-mlops-ecr:latest
 
-
+      # STEP 14: Push Docker image to AWS Elastic Container Registry (ECR)
+      - name: Docker push to ECR
+        if: success()
+        run: |
+          docker push 739275446561.dkr.ecr.$AWS_REGION.amazonaws.com/prashant-mlops-ecr:latest
