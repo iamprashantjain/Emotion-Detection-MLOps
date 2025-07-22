@@ -111,7 +111,14 @@
          1. aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 739275446561.dkr.ecr.ap-south-1.amazonaws.com
          2. docker build -t prashant-mlops-ecr .
 
-    - In EC2, pull image from ECR and run (manually)
+    - In EC2, we will pull image from ECR and run via cicd pipeline
+         1. create EC2
+         2. run below commands to setup EC2
+
+         ![alt text](image-1.png)
+
+         3. after setup done, update cicd pipeline
+
       
       ![alt text](image.png)
 
