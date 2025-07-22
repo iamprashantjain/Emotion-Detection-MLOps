@@ -25,7 +25,7 @@
 # stage1: builder stage
 FROM python:3.10 AS build
 
-WORKDIR/app
+WORKDIR /app
 
 # Copy application files and model artifacts
 COPY flask_app/ /app/
@@ -39,7 +39,7 @@ RUN pip install --no-cache-dir -r requirements.txt && \
 #stage2: final stage
 FROM python:3.10 AS final
 
-WORKDIR/app
+WORKDIR /app
 
 #copy only necessary files form build stage
 COPY --from=build /app /app
