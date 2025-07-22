@@ -98,10 +98,7 @@
         12. Fully managed services - No need to worry about infra
         13. ECR integrates easily with CI/CD
         14. Support multi architecture images like windows, linux or max os
-        
 
-    - **How to reduce docker image size**
-    - 
 
     - Create ECR repo
          - Create ECR: "prashant-mlops-ecr" normally without changing any settings
@@ -113,20 +110,26 @@
 
     - In EC2, we will pull image from ECR and run via cicd pipeline
          1. create EC2
-         2. run below commands to setup EC2
 
          ![alt text](image-1.png)
+
+         2. run below commands to setup EC2
+
+         ![alt text](image.png)
 
          3. after setup done, update cicd pipeline
          4. updated AWS security groups
 
          ![alt text](image-2.png)
 
-    - 
-
+    - **How to Optimize & Reduce Docker image size**
+      1. choose minimal base image like python: 3.9 - Alpine
+      2. use multi stage builds (use temp & final container)
+      3. minimize layers
+      4. use .dockerignorefile
+      5. minimize python package -- use "no-cache-dir"
+      6. remove unnecessary files
       
-      ![alt text](image.png)
-
     - 
 
 
