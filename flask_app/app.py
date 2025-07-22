@@ -15,6 +15,8 @@ from nltk.stem import WordNetLemmatizer
 from pathlib import Path
 import pickle
 
+nltk.download('stopwords')
+nltk.download('wordnet')
 
 def lemmatization(text):
     """Lemmatize the text."""

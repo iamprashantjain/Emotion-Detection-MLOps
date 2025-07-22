@@ -75,3 +75,13 @@ jobs:
         env:
           DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
         run: python -m unittest tests/test_flask_app.py
+
+
+      - name: Build docker image
+        if: success()
+        run: |
+          docker build -t emotion-detector:latest .
+
+        
+
+
