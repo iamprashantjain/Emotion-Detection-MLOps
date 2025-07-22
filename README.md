@@ -118,6 +118,7 @@
          ![alt text](image-1.png)
 
          3. after setup done, update cicd pipeline
+         4. updated AWS security groups
 
       
       ![alt text](image.png)
