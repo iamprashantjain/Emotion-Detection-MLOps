@@ -280,8 +280,22 @@
 6. Shadow deployment
 
 
+--------------------------------------------------------------------------------------------
 
+**In Summary:**
 
+    1. Gather Data: Webscrape or fetch from Dbs
+    2. Data Assesment
+    3. Data CLeaning
+    4. EDA
+    5. Run Experiments to find best Feature Engineering, Model & Hyper parameters by tracking it on MLFlow
+    6. Create dvc pipeline of best feature engineering, model & hyper parameters
+    7. Uptill here, Our experiments are tracked on mlflow, code is tracked on github, data is tracked on S3 via dvc
+    8. Add CI which will trigger dvc pipeline on new push, perform tests & register model on mlflow model_registry
+    9. Create Flask app which will fetch latest model from model registry and make predictions -- Test if working
+    10. Once test is completed, Create docker image of flask app and push image to ECR via CI_CD pipeline
+    11. Here we have 2 options:
+        1. Fetch image from ECR and deploy on EC2 (everything will be manual)
+        2. Fetch image from ECR and deploy on EC2 using ECS (all automated: load balancer, ASG, we can setup deployment & rollback strategy)
 
-
-
+--------------------------------------------------------------------------------------------        
