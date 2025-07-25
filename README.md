@@ -110,16 +110,16 @@
       - In EC2, we will pull image from ECR and run via cicd pipeline
             1. create EC2
 
-            ![alt text](image-1.png)
+![alt text](image-1.png)
 
             2. run below commands to setup EC2
 
-            ![alt text](image.png)
+![alt text](image.png)
 
             3. after setup done, update cicd pipeline
             4. updated AWS security groups
 
-            ![alt text](image-2.png)
+![alt text](image-2.png)
 
       - **How to Optimize & Reduce Docker image size**
          1. choose minimal base image like python: 3.9 - Alpine
@@ -215,7 +215,7 @@
 
             1. Deployments - It has some built in deployment strategies
 
-            ![alt text](image-3.png)
+![alt text](image-3.png)
 
             2. Automated rollbacks - AWS codedeploy roll back to previous version automatically if new deployment fails
 
@@ -226,8 +226,8 @@
         
         - **EC2 Deployment Workflow using AWS CodeDeploy + ASG + ECR**
 
-        ![alt text](image-4.png)
+![alt text](image-4.png)
 
-        ![alt text](image-5.png)
+![alt text](image-5.png)
 
         
