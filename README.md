@@ -270,18 +270,14 @@
 
 **Deployment Strategies**
     <!-- (sess30: 902) -->
-    1. Start-Stop: We stop current running machine, deploy new version of app on new instance and shift traffic to new one and delete older one
     
-    2. Rolling deployment: Where we roll out new updates slowly means we update servers 1 by 1, so some users will still see old while they are being updated
-    
-    3. Blue-Green deployment: Blue is old version and green is new version, we test everything on green and once succeed then switch traffic from old to new and delete old 
+1. Start-Stop: We stop current running machine, deploy new version of app on new instance and shift traffic to new one and delete older one
+2. Rolling deployment: Where we roll out new updates slowly means we update servers 1 by 1, so some users will still see old while they are being updated
+3. Blue-Green deployment: Blue is old version and green is new version, we test everything on green and once succeed then switch traffic from old to new and delete old 
     version
-    
-    4. Canary deployment
-    
-    5. A/B testing
-    
-    6. Shadow deployment
+4. Canary deployment
+5. A/B testing
+6. Shadow deployment
 
 
 
