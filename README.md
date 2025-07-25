@@ -230,4 +230,56 @@
 
 ![alt text](image-5.png)
 
+        1. Create new launch template not existing one using below screenshot & new iam roles
+        2. Create new ASG using launch template (We need to deploy ECR image to ASG which will be handled by code deploy)
+        3. check if codedeploy agent is running? -- sudo service codedeploy-agent status
         
+        - even though EC2 instances will be running on ASG, website still wont work bcoz docker is not installed, docker image is not running etc
+        - now we will work on code deployment using "codedeploy" : Application -> Deployment Group -> Deployment
+                
+        4. CodeDeploy: Create a "application" and inside it create a "deployment group" : There are 2 types of updates: 
+            1. In-place: It will update all/half/1 at a time instances in deployment group -- similar to rolling update and for that time its being updated, that app will be offline 
+            2. Blue/Green: Blue = current version (v1) running in ECS, Green = new version (v2) deployed in parallel, 
+                Test Green (v2) fully to ensure it works, If all tests pass, shift traffic from Blue (v1) to Green (v2) using a Load Balancer, After switch, delete Blue (v1) or keep it for rollback
+
+        5. Connect deployment group with ASG (So deployment group will become ASG)
+        6. Create new "deployment" and inside which we tell what to do at the time of deployment like pull image from ecr, run image etc -- appspec.yaml (provide it in revision type either saved on github or aws s3)
+            - create a new file in project root folder : appspec.yml
+            - write below code:
+
+![alt text](image-8.png)
+
+            - Hooks are steps where you can run custom actions before or after different phases of deployment
+
+![alt text](image-9.png)            
+
+![alt text](image-10.png)
+
+            - In before start, we are installing all dependencies
+            - In after install, we are executing all aws ecr helper commands like pulling, deleting previous containers, running newly pulled container etc
+
+        7. Run deployment
+
+        - Since ASG is communicating with ECR and Codedeploy is also communicating with EC2, so we need those IAM roles setup already which will have access to those
+        - We have to setup 2 iam roles inside "Launch Template"
+        - Install "code deploy runner/agent" on each EC2 instance to run the deployment on ASG EC2 instances
+
+![alt text](image-6.png)
+
+
+
+**Deployment Strategies**
+    <!-- (sess30: 902) -->
+    1. Start-Stop: We stop current running machine, deploy new version of app on new instance and shift traffic to new one and delete older one
+    2. Rolling deployment: Where we roll out new updates slowly means we update servers 1 by 1, so some users will still see old while they are being updated
+    3. Blue-Green deployment: Blue is old version and green is new version, we test everything on green and once succeed then switch traffic from old to new and delete old version
+    4. Canary deployment
+    5. A/B testing
+    6. Shadow deployment
+
+
+
+
+
+
+
