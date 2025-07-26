@@ -299,3 +299,29 @@
         2. Fetch image from ECR and deploy on EC2 using ECS (all automated: load balancer, ASG, we can setup deployment & rollback strategy)
 
 --------------------------------------------------------------------------------------------        
+
+
+1. build model using mlflow experiment
+2. used best experimetn to create dvc pipeline
+3. send model to model registry
+4. flask api
+5. dockerize flask api
+6. image sent to ECR
+7. all above done using CI -- dvc repro runs on self-hosted machines on aws with higher configs
+8. We will now pull the image from ECR and deploy it on EC2 using ci/cd pipeline
+9. create ASG with 2 or more EC2 instances --> run ecr docker image on this ASG --> using code deploy we will use different deployment strategy
+10. we need launch template to create ASG
+11. AWS - EC2 - Launch Templates - Create Launch Template - Name: my template, Version: 1, Auto scaling guidance (tick) - Quick start - Ubuntu - t2 micro - SSH key pair - select security group default - In Advance details - select iam role (create new iam role which has access of ECR & CodeDeploy) - paste script under user data : script to install code deploy agent -- create launch template
+12. create ASG using above launch template - attach new load balancer - application lb - internet facing - new traget group - select ec2 health checks - enable monitoring - desired capacity: 2 - create ASG
+13. 2 new EC2 instances will be launched - check if code deploy agent is working or not : sudo service codedeploy-agent status
+14. Now we have our ASG, we can create codedeploy application
+15. aws - codedeploy - application - create application - compute platform: EC2 - create deployment group - create iam role for codedeploy service which wil have access to codedeploy - select service role - deployment type: in-place(rolling back) vs blue-green (when new will deployed and tested once confirm then traffic will be switched to new and old will be deleted) - deploy setting - 
+16. create new deployment on this deployment group
+17. we need appspec.yml -- which needs 2 files install-dependencies & start-docker -- we need all 3 files while creating deployment
+18. we will push these files to github as zip & pushed to s3 -- and use that s3 address here -- all this will be done using CI/CD pipeline
+19. create 1 file: appspec.yml in project root folder and under deploy/scripts create 2 new files: install_depend & start_docker (ecr view push commands)
+20. update ci_cd.yml  - currently last step is push docker image to ECR
+    - zip required files
+    - upload zip to s3
+    - deploy to aws clouddeploy
+21. when we will push to github, this will trriger new ci/cd workflow which will deploy the app using code deploy
